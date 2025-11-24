@@ -8,7 +8,7 @@ import '../../domain/models/stock_model.dart';
 /// Serviço que lida diretamente com as chamadas de API de estoque
 class StockApiService {
   final http.Client client;
-  final String baseUrl = 'http://localhost:6000';
+  final String baseUrl = 'https://projeto-aplicado.onrender.com';
 
   StockApiService(this.client);
 
@@ -55,7 +55,9 @@ class StockApiService {
       final jsonError = jsonDecode(response.body);
       throw Exception(jsonError['erro'] ?? 'Dados inválidos');
     } else {
-      throw Exception('Falha ao cadastrar peça. Status: ${response.statusCode}');
+      throw Exception(
+        'Falha ao cadastrar peça. Status: ${response.statusCode}',
+      );
     }
   }
 
@@ -122,7 +124,9 @@ class StockApiService {
       final List<dynamic> jsonList = jsonDecode(response.body);
       return jsonList.map((json) => StockModel.fromJson(json)).toList();
     } else {
-      throw Exception('Falha ao buscar alertas. Status: ${response.statusCode}');
+      throw Exception(
+        'Falha ao buscar alertas. Status: ${response.statusCode}',
+      );
     }
   }
 }

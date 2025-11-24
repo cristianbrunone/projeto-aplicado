@@ -5,12 +5,11 @@ import 'package:http/http.dart' as http;
 import 'package:mobile/core/utils/logger.dart';
 import 'package:mobile/domain/models/user_model.dart';
 
-
 /// Serviço que lida diretamente com as chamadas de API de autenticação.
 class AuthApiService {
   final http.Client client;
   // A URL base confirmada do Render
-  final String baseUrl = 'http://localhost:6000';
+  final String baseUrl = 'https://projeto-aplicado.onrender.com';
 
   AuthApiService(this.client);
 

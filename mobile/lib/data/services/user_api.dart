@@ -8,7 +8,7 @@ import '../../domain/models/user_model.dart';
 /// Serviço que lida diretamente com as chamadas de API de usuários
 class UserApiService {
   final http.Client client;
-  final String baseUrl = 'http://localhost:6000';
+  final String baseUrl = 'https://projeto-aplicado.onrender.com';
 
   UserApiService(this.client);
 
@@ -27,7 +27,9 @@ class UserApiService {
       final List<dynamic> jsonList = jsonDecode(response.body);
       return jsonList.map((json) => UserModel.fromJson(json)).toList();
     } else {
-      throw Exception('Falha ao buscar usuários. Status: ${response.statusCode}');
+      throw Exception(
+        'Falha ao buscar usuários. Status: ${response.statusCode}',
+      );
     }
   }
 
@@ -55,7 +57,9 @@ class UserApiService {
       final jsonError = jsonDecode(response.body);
       throw Exception(jsonError['erro'] ?? 'Dados inválidos');
     } else {
-      throw Exception('Falha ao cadastrar usuário. Status: ${response.statusCode}');
+      throw Exception(
+        'Falha ao cadastrar usuário. Status: ${response.statusCode}',
+      );
     }
   }
 

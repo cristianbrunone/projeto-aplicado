@@ -9,7 +9,7 @@ import '../../domain/models/order_service_model.dart';
 
 class OrderServiceApi {
   final http.Client client;
-  final String baseUrl = 'http://localhost:6000';
+  final String baseUrl = 'https://projeto-aplicado.onrender.com';
 
   OrderServiceApi(this.client);
 
