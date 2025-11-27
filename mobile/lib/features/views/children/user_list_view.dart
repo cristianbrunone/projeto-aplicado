@@ -318,155 +318,11 @@ class _UserListViewState extends ConsumerState<UserListView> {
     required bool isEdit,
     UserModel? user,
   }) {
-    final nomeController = TextEditingController(text: user?.nome ?? '');
-    final emailController = TextEditingController(text: user?.email ?? '');
-    final funcaoController = TextEditingController(text: user?.funcao ?? '');
-    final setorController = TextEditingController(text: user?.setor ?? '');
-    final senhaController = TextEditingController();
-
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(isEdit ? 'Editar Usuário' : 'Novo Usuário'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nomeController,
-                decoration: const InputDecoration(
-                  labelText: 'Nome Completo',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person),
-                ),
-              ),
-              SizedBox(height: 10.h),
-              TextField(
-                controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              SizedBox(height: 10.h),
-              TextField(
-                controller: funcaoController,
-                decoration: const InputDecoration(
-                  labelText: 'Função',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.work),
-                ),
-              ),
-              SizedBox(height: 10.h),
-              TextField(
-                controller: setorController,
-                decoration: const InputDecoration(
-                  labelText: 'Setor',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.business),
-                ),
-              ),
-              SizedBox(height: 10.h),
-              TextField(
-                controller: senhaController,
-                decoration: InputDecoration(
-                  labelText: isEdit
-                      ? 'Nova Senha (deixe vazio para manter)'
-                      : 'Senha',
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.lock),
-                ),
-                obscureText: true,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final nome = nomeController.text.trim();
-              final email = emailController.text.trim();
-              final funcao = funcaoController.text.trim();
-              final setor = setorController.text.trim();
-              final senha = senhaController.text.trim();
-
-              // Validações
-              if (nome.isEmpty ||
-                  email.isEmpty ||
-                  funcao.isEmpty ||
-                  setor.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Preencha todos os campos obrigatórios'),
-                  ),
-                );
-                return;
-              }
-
-              if (!isEdit && senha.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Senha é obrigatória para novo usuário'),
-                  ),
-                );
-                return;
-              }
-
-              bool success;
-              if (isEdit) {
-                success = await ref
-                    .read(userViewModelProvider.notifier)
-                    .updateUser(
-                      id: user!.id,
-                      nome: nome,
-                      email: email,
-                      funcao: funcao,
-                      setor: setor,
-                      senha: senha.isNotEmpty ? senha : null,
-                    );
-              } else {
-                success = await ref
-                    .read(userViewModelProvider.notifier)
-                    .createUser(
-                      nome: nome,
-                      email: email,
-                      funcao: funcao,
-                      setor: setor,
-                      senha: senha,
-                    );
-              }
-
-              if (context.mounted) {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      success
-                          ? isEdit
-                                ? 'Usuário atualizado!'
-                                : 'Usuário criado!'
-                          : 'Erro ao salvar usuário',
-                    ),
-                    backgroundColor: success ? Colors.green : Colors.red,
-                  ),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryGreen,
-            ),
-            child: Text(
-              isEdit ? 'Salvar' : 'Criar',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
+      builder: (context) => _UserFormDialog(
+        isEdit: isEdit,
+        user: user,
       ),
     );
   }
@@ -501,10 +357,216 @@ class _UserListViewState extends ConsumerState<UserListView> {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Excluir'),
+            child: const Text('Excluir', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
     );
+  }
+}
+
+class _UserFormDialog extends ConsumerStatefulWidget {
+  final bool isEdit;
+  final UserModel? user;
+
+  const _UserFormDialog({
+    required this.isEdit,
+    this.user,
+  });
+
+  @override
+  ConsumerState<_UserFormDialog> createState() => _UserFormDialogState();
+}
+
+class _UserFormDialogState extends ConsumerState<_UserFormDialog> {
+  late final TextEditingController nomeController;
+  late final TextEditingController emailController;
+  late final TextEditingController funcaoController;
+  late final TextEditingController setorController;
+  late final TextEditingController senhaController;
+
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    nomeController = TextEditingController(text: widget.user?.nome ?? '');
+    emailController = TextEditingController(text: widget.user?.email ?? '');
+    funcaoController = TextEditingController(text: widget.user?.funcao ?? '');
+    setorController = TextEditingController(text: widget.user?.setor ?? '');
+    senhaController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    nomeController.dispose();
+    emailController.dispose();
+    funcaoController.dispose();
+    setorController.dispose();
+    senhaController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.isEdit ? 'Editar Usuário' : 'Novo Usuário'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nomeController,
+              enabled: !_isSaving,
+              decoration: const InputDecoration(
+                labelText: 'Nome Completo',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person),
+              ),
+            ),
+            SizedBox(height: 10.h),
+            TextField(
+              controller: emailController,
+              enabled: !_isSaving,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            SizedBox(height: 10.h),
+            TextField(
+              controller: funcaoController,
+              enabled: !_isSaving,
+              decoration: const InputDecoration(
+                labelText: 'Função',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.work),
+              ),
+            ),
+            SizedBox(height: 10.h),
+            TextField(
+              controller: setorController,
+              enabled: !_isSaving,
+              decoration: const InputDecoration(
+                labelText: 'Setor',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.business),
+              ),
+            ),
+            SizedBox(height: 10.h),
+            TextField(
+              controller: senhaController,
+              enabled: !_isSaving,
+              decoration: InputDecoration(
+                labelText: widget.isEdit
+                    ? 'Nova Senha (deixe vazio para manter)'
+                    : 'Senha',
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.lock),
+              ),
+              obscureText: true,
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isSaving ? null : () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        ElevatedButton(
+          onPressed: _isSaving ? null : _handleSave,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primaryGreen,
+          ),
+          child: _isSaving
+              ? SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : Text(
+                  widget.isEdit ? 'Salvar' : 'Criar',
+                  style: const TextStyle(color: Colors.white),
+                ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _handleSave() async {
+    final nome = nomeController.text.trim();
+    final email = emailController.text.trim();
+    final funcao = funcaoController.text.trim();
+    final setor = setorController.text.trim();
+    final senha = senhaController.text.trim();
+
+    // Validações
+    if (nome.isEmpty || email.isEmpty || funcao.isEmpty || setor.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha todos os campos obrigatórios'),
+        ),
+      );
+      return;
+    }
+
+    if (!widget.isEdit && senha.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Senha é obrigatória para novo usuário'),
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isSaving = true);
+
+    bool success;
+    try {
+      if (widget.isEdit) {
+        success = await ref.read(userViewModelProvider.notifier).updateUser(
+              id: widget.user!.id,
+              nome: nome,
+              email: email,
+              funcao: funcao,
+              setor: setor,
+              senha: senha.isNotEmpty ? senha : null,
+            );
+      } else {
+        success = await ref.read(userViewModelProvider.notifier).createUser(
+              nome: nome,
+              email: email,
+              funcao: funcao,
+              setor: setor,
+              senha: senha,
+            );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
+
+    if (mounted && context.mounted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            success
+                ? widget.isEdit
+                    ? 'Usuário atualizado!'
+                    : 'Usuário criado!'
+                : 'Erro ao salvar usuário',
+          ),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    }
   }
 }

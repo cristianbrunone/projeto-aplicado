@@ -395,7 +395,7 @@ class StockAlertsView extends ConsumerWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryGreen,
             ),
-            child: const Text('Salvar'),
+            child: const Text('Salvar', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

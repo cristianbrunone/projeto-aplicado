@@ -183,7 +183,7 @@ class NotificationsView extends ConsumerWidget {
         margin: EdgeInsets.only(bottom: 10.h),
         color: notification.isRead
             ? Colors.white
-            : color.withValues(alpha: 0.05),
+            : const Color.fromARGB(142, 255, 255, 255),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
           side: BorderSide(

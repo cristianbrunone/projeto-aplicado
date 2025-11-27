@@ -79,10 +79,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
                   final matchesStatus =
                       selectedStatus == 'Todos' ||
-                      order.status == selectedStatus;
+                      order.status?.toLowerCase() == selectedStatus.toLowerCase();
 
                   return matchesSearch && matchesStatus;
-                }).toList();
+                }).toList()
+                  ..sort((a, b) {
+                    // Ordena por ID decrescente (mais recentes primeiro)
+                    return b.id.compareTo(a.id);
+                  });
 
                 if (filteredOrders.isEmpty) {
                   return const Center(
@@ -167,6 +171,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
       child: Row(
         children: statusList.map((status) {
           final isSelected = status == selectedStatus;
+          final statusColor = _getStatusColor(status);
+
           return Padding(
             padding: EdgeInsets.only(right: 8.w),
             child: FilterChip(
@@ -177,16 +183,32 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   ref.read(statusFilterProvider.notifier).state = status;
                 }
               },
-              selectedColor: AppColors.primaryGreen,
+              selectedColor: statusColor,
               checkmarkColor: Colors.white,
               labelStyle: TextStyle(
                 color: isSelected ? Colors.white : AppColors.black,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
-              backgroundColor: Colors.grey[200],
+              backgroundColor: statusColor.withValues(alpha: 0.15),
             ),
           );
         }).toList(),
       ),
     );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'atrasada':
+        return Colors.red.shade700;
+      case 'concluída':
+        return AppColors.primaryGreen;
+      case 'em andamento':
+        return Colors.orange.shade700;
+      case 'aberta':
+        return Colors.blue.shade700;
+      default:
+        return AppColors.primaryGreen;
+    }
   }
 }

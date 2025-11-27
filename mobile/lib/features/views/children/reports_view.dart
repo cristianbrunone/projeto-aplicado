@@ -204,26 +204,26 @@ class ReportsView extends ConsumerWidget {
       elevation: 3,
       color: AppColors.lightGray,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: color, size: 32),
+            Icon(icon, color: color, size: 28),
             const SizedBox(height: 8),
             Text(
               value,
               style: const TextStyle(
-                fontSize: 28,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: AppColors.black,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 0),
             Text(
               title,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 10,
                 color: Colors.grey[600],
                 fontWeight: FontWeight.w500,
               ),
@@ -240,9 +240,7 @@ class ReportsView extends ConsumerWidget {
     return Card(
       elevation: 3,
       color: AppColors.lightGray,
-      child: const Center(
-        child: CircularProgressIndicator(),
-      ),
+      child: const Center(child: CircularProgressIndicator()),
     );
   }
 
@@ -421,10 +419,7 @@ class ReportsView extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Center(
-          child: Text(
-            message,
-            style: const TextStyle(color: Colors.grey),
-          ),
+          child: Text(message, style: const TextStyle(color: Colors.grey)),
         ),
       ),
     );
@@ -441,10 +436,7 @@ class ReportsView extends ConsumerWidget {
             children: [
               const Icon(Icons.error, color: AppColors.errorRed, size: 48),
               const SizedBox(height: 8),
-              Text(
-                message,
-                style: const TextStyle(color: AppColors.errorRed),
-              ),
+              Text(message, style: const TextStyle(color: AppColors.errorRed)),
             ],
           ),
         ),

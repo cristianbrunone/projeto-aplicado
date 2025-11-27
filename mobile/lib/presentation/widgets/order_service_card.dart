@@ -18,8 +18,12 @@ class OrderServiceCard extends ConsumerWidget {
         return Colors.red.shade700;
       case 'concluída':
         return AppColors.primaryGreen;
+      case 'em andamento':
+        return Colors.orange.shade700;
+      case 'aberta':
+        return Colors.blue.shade700;
       default:
-        return Colors.yellow.shade700;
+        return Colors.grey.shade700;
     }
   }
 
@@ -70,26 +74,66 @@ class OrderServiceCard extends ConsumerWidget {
               ],
             ),
             SizedBox(height: 5.h),
-            Text(
-              'Solicitante: ${order.solicitante?.nome ?? 'N/A'}',
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
+            RichText(
+              text: TextSpan(
+                style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
+                children: [
+                  TextSpan(
+                    text: 'Solicitante: ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: order.solicitante?.nome ?? 'N/A'),
+                ],
+              ),
             ),
             SizedBox(height: 5.h),
-            Text(
-              'Tipo: ${order.tipo ?? 'N/A'}',
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
+            RichText(
+              text: TextSpan(
+                style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
+                children: [
+                  TextSpan(
+                    text: 'Tipo: ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: order.tipo ?? 'N/A'),
+                ],
+              ),
             ),
-            Text(
-              'Setor: ${order.setor ?? 'N/A'}',
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
+            RichText(
+              text: TextSpan(
+                style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
+                children: [
+                  TextSpan(
+                    text: 'Setor: ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: order.setor ?? 'N/A'),
+                ],
+              ),
             ),
-            Text(
-              'Recorrência: ${order.recorrencia ?? 'N/A'}',
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
+            RichText(
+              text: TextSpan(
+                style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
+                children: [
+                  TextSpan(
+                    text: 'Recorrência: ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: order.recorrencia ?? 'N/A'),
+                ],
+              ),
             ),
-            Text(
-              'Detalhes: ${order.detalhes ?? 'N/A'}',
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
+            RichText(
+              text: TextSpan(
+                style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
+                children: [
+                  TextSpan(
+                    text: 'Detalhes: ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: order.detalhes ?? 'N/A'),
+                ],
+              ),
             ),
             SizedBox(height: 10.h),
             Row(
@@ -127,180 +171,9 @@ class OrderServiceCard extends ConsumerWidget {
   }
 
   void _showEditDialog(BuildContext context, WidgetRef ref) {
-    final statusOptions = ['Aberta', 'Em andamento', 'Concluída', 'Atrasada'];
-    final tipoOptions = ['Preventiva', 'Corretiva', 'Preditiva'];
-    final recorrenciaOptions = ['Única', 'Diária', 'Semanal', 'Mensal', 'Anual'];
-
-    // Controllers para os campos editáveis
-    final setorController = TextEditingController(text: order.setor ?? '');
-    final detalhesController = TextEditingController(text: order.detalhes ?? '');
-
-    // Variáveis de estado para os dropdowns
-    String selectedTipo = tipoOptions.contains(order.tipo) ? order.tipo! : tipoOptions.first;
-    String selectedStatus = statusOptions.contains(order.status) ? order.status! : statusOptions.first;
-    String selectedRecorrencia = recorrenciaOptions.contains(order.recorrencia) ? order.recorrencia! : recorrenciaOptions.first;
-
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('Editar Ordem de Serviço'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Ordem: ${order.equipamento?.peca ?? 'N/A'}',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryGreen,
-                  ),
-                ),
-                SizedBox(height: 16.h),
-
-                // Tipo
-                const Text('Tipo:', style: TextStyle(fontWeight: FontWeight.w600)),
-                SizedBox(height: 8.h),
-                DropdownButtonFormField<String>(
-                  initialValue: selectedTipo,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  items: tipoOptions.map((tipo) {
-                    return DropdownMenuItem(value: tipo, child: Text(tipo));
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        selectedTipo = value;
-                      });
-                    }
-                  },
-                ),
-                SizedBox(height: 12.h),
-
-                // Setor
-                const Text('Setor:', style: TextStyle(fontWeight: FontWeight.w600)),
-                SizedBox(height: 8.h),
-                TextField(
-                  controller: setorController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    hintText: 'Ex: Manutenção',
-                  ),
-                ),
-                SizedBox(height: 12.h),
-
-                // Status
-                const Text('Status:', style: TextStyle(fontWeight: FontWeight.w600)),
-                SizedBox(height: 8.h),
-                DropdownButtonFormField<String>(
-                  initialValue: selectedStatus,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  items: statusOptions.map((status) {
-                    return DropdownMenuItem(value: status, child: Text(status));
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        selectedStatus = value;
-                      });
-                    }
-                  },
-                ),
-                SizedBox(height: 12.h),
-
-                // Recorrência
-                const Text('Recorrência:', style: TextStyle(fontWeight: FontWeight.w600)),
-                SizedBox(height: 8.h),
-                DropdownButtonFormField<String>(
-                  initialValue: selectedRecorrencia,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  items: recorrenciaOptions.map((rec) {
-                    return DropdownMenuItem(value: rec, child: Text(rec));
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        selectedRecorrencia = value;
-                      });
-                    }
-                  },
-                ),
-                SizedBox(height: 12.h),
-
-                // Detalhes
-                const Text('Detalhes:', style: TextStyle(fontWeight: FontWeight.w600)),
-                SizedBox(height: 8.h),
-                TextField(
-                  controller: detalhesController,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    hintText: 'Descreva os detalhes da ordem...',
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                setorController.dispose();
-                detalhesController.dispose();
-                Navigator.pop(context);
-              },
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final success = await ref
-                    .read(orderServiceNotifierProvider.notifier)
-                    .updateOrder(
-                      id: order.id,
-                      tipo: selectedTipo,
-                      setor: setorController.text.isNotEmpty ? setorController.text : null,
-                      detalhes: detalhesController.text.isNotEmpty ? detalhesController.text : null,
-                      status: selectedStatus,
-                      recorrencia: selectedRecorrencia,
-                    );
-
-                if (context.mounted) {
-                  setorController.dispose();
-                  detalhesController.dispose();
-                  Navigator.pop(context);
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        success
-                            ? 'Ordem atualizada com sucesso!'
-                            : 'Erro ao atualizar ordem',
-                      ),
-                      backgroundColor: success ? Colors.green : Colors.red,
-                    ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryGreen,
-              ),
-              child: const Text('Salvar'),
-            ),
-          ],
-        ),
-      ),
+      builder: (context) => _EditOrderDialog(order: order, ref: ref),
     );
   }
 
@@ -338,10 +211,245 @@ class OrderServiceCard extends ConsumerWidget {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Excluir'),
+            child: const Text('Excluir', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _EditOrderDialog extends ConsumerStatefulWidget {
+  final OrderServiceModel order;
+  final WidgetRef ref;
+
+  const _EditOrderDialog({required this.order, required this.ref});
+
+  @override
+  ConsumerState<_EditOrderDialog> createState() => _EditOrderDialogState();
+}
+
+class _EditOrderDialogState extends ConsumerState<_EditOrderDialog> {
+  late final TextEditingController setorController;
+  late final TextEditingController detalhesController;
+
+  late String selectedTipo;
+  late String selectedStatus;
+  late String selectedRecorrencia;
+
+  final statusOptions = ['Aberta', 'Em andamento', 'Concluída', 'Atrasada'];
+  final tipoOptions = ['Preventiva', 'Corretiva', 'Preditiva'];
+  final recorrenciaOptions = ['Única', 'Diária', 'Semanal', 'Mensal', 'Anual'];
+
+  @override
+  void initState() {
+    super.initState();
+    setorController = TextEditingController(text: widget.order.setor ?? '');
+    detalhesController = TextEditingController(
+      text: widget.order.detalhes ?? '',
+    );
+
+    selectedTipo = tipoOptions.contains(widget.order.tipo)
+        ? widget.order.tipo!
+        : tipoOptions.first;
+    selectedStatus = statusOptions.contains(widget.order.status)
+        ? widget.order.status!
+        : statusOptions.first;
+    selectedRecorrencia = recorrenciaOptions.contains(widget.order.recorrencia)
+        ? widget.order.recorrencia!
+        : recorrenciaOptions.first;
+  }
+
+  @override
+  void dispose() {
+    setorController.dispose();
+    detalhesController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Editar Ordem de Serviço'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Ordem: ${widget.order.equipamento?.peca ?? 'N/A'}',
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primaryGreen,
+              ),
+            ),
+            SizedBox(height: 16.h),
+
+            // Tipo
+            const Text('Tipo:', style: TextStyle(fontWeight: FontWeight.w600)),
+            SizedBox(height: 8.h),
+            DropdownButtonFormField<String>(
+              value: selectedTipo,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+              ),
+              items: tipoOptions.map((tipo) {
+                return DropdownMenuItem(value: tipo, child: Text(tipo));
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    selectedTipo = value;
+                  });
+                }
+              },
+            ),
+            SizedBox(height: 12.h),
+
+            // Setor
+            const Text('Setor:', style: TextStyle(fontWeight: FontWeight.w600)),
+            SizedBox(height: 8.h),
+            TextField(
+              controller: setorController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                hintText: 'Ex: Manutenção',
+              ),
+            ),
+            SizedBox(height: 12.h),
+
+            // Status
+            const Text(
+              'Status:',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height: 8.h),
+            DropdownButtonFormField<String>(
+              value: selectedStatus,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+              ),
+              items: statusOptions.map((status) {
+                return DropdownMenuItem(value: status, child: Text(status));
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    selectedStatus = value;
+                  });
+                }
+              },
+            ),
+            SizedBox(height: 12.h),
+
+            // Recorrência
+            const Text(
+              'Recorrência:',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height: 8.h),
+            DropdownButtonFormField<String>(
+              value: selectedRecorrencia,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+              ),
+              items: recorrenciaOptions.map((rec) {
+                return DropdownMenuItem(value: rec, child: Text(rec));
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    selectedRecorrencia = value;
+                  });
+                }
+              },
+            ),
+            SizedBox(height: 12.h),
+
+            // Detalhes
+            const Text(
+              'Detalhes:',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height: 8.h),
+            TextField(
+              controller: detalhesController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                hintText: 'Descreva os detalhes da ordem...',
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            final success = await ref
+                .read(orderServiceNotifierProvider.notifier)
+                .updateOrder(
+                  id: widget.order.id,
+                  tipo: selectedTipo,
+                  setor: setorController.text.isNotEmpty
+                      ? setorController.text
+                      : null,
+                  detalhes: detalhesController.text.isNotEmpty
+                      ? detalhesController.text
+                      : null,
+                  status: selectedStatus,
+                  recorrencia: selectedRecorrencia,
+                );
+
+            if (context.mounted) {
+              Navigator.pop(context);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    success
+                        ? 'Ordem atualizada com sucesso!'
+                        : 'Erro ao atualizar ordem',
+                  ),
+                  backgroundColor: success ? Colors.green : Colors.red,
+                ),
+              );
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primaryGreen,
+          ),
+          child: const Text(
+            'Salvar',
+            style: TextStyle(color: AppColors.accentWhite),
+          ),
+        ),
+      ],
     );
   }
 }

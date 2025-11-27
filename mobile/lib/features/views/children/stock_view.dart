@@ -617,7 +617,7 @@ class _StockViewState extends ConsumerState<StockView> {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Excluir'),
+            child: const Text('Excluir', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
